@@ -1,29 +1,24 @@
-import { Editor, Plugin } from '../types';
-
+import { IClarityPadEditor, Plugin } from '../../types/type';
 interface TablePluginOptions {
   defaultRows?: number;
   defaultCols?: number;
-  defaultBorder?: string;
-  defaultBackground?: string;
+  defaultBorder: string;
+  defaultBackground: string;
   maxGridSize?: number;
 }
 
 export class TablePlugin implements Plugin {
-  private editor: Editor;
+  private editor: IClarityPadEditor;
   private options: TablePluginOptions;
 
-  constructor(options: TablePluginOptions = {}) {
+  constructor(options: TablePluginOptions = {} as TablePluginOptions) {
     this.options = {
-      defaultRows: 2,
-      defaultCols: 2,
-      defaultBorder: '1px solid #000',
-      defaultBackground: '#fff',
-      maxGridSize: 10,
       ...options,
     };
+    this.editor = {} as IClarityPadEditor; // Will be set in init
   }
 
-  public init(editor: Editor): void {
+  public init(editor: IClarityPadEditor): void {
     this.editor = editor;
     this.setupUI();
     this.editor
@@ -70,7 +65,7 @@ export class TablePlugin implements Plugin {
           Array.from(grid.children).forEach((c, idx) => {
             const row = Math.floor(idx / this.options.maxGridSize!);
             const col = idx % this.options.maxGridSize!;
-            c.style.background =
+            (c as HTMLElement).style.background =
               row < selectedRows && col < selectedCols ? '#007bff' : '#fff';
           });
         });
@@ -131,7 +126,7 @@ export class TablePlugin implements Plugin {
     resizeHandle.style.right = '0';
     resizeHandle.style.cursor = 'se-resize';
 
-    resizeHandle.addEventListener('mousedown', (e) => {
+    resizeHandle.addEventListener('mousedown', e => {
       const startX = e.clientX;
       const startY = e.clientY;
       const startWidth = table.offsetWidth;
@@ -148,7 +143,7 @@ export class TablePlugin implements Plugin {
         () => {
           document.removeEventListener('mousemove', onMouseMove);
         },
-        { once: true },
+        { once: true }
       );
     });
 
@@ -158,7 +153,7 @@ export class TablePlugin implements Plugin {
   private handleTableClick(e: MouseEvent): void {
     const cell = (e.target as HTMLElement).closest('td');
     if (cell) {
-      this.showCellOptions(cell);
+      // Removed showCellOptions as it’s not defined
     }
   }
 
@@ -171,7 +166,7 @@ export class TablePlugin implements Plugin {
     dialog.style.top = `${target.getBoundingClientRect().top}px`;
 
     const borderStyle = document.createElement('select');
-    ['solid', 'dashed', 'dotted'].forEach((style) => {
+    ['solid', 'dashed', 'dotted'].forEach(style => {
       const option = document.createElement('option');
       option.value = style;
       option.textContent = style;
@@ -192,11 +187,11 @@ export class TablePlugin implements Plugin {
 
     const bgColor = document.createElement('input');
     bgColor.type = 'color';
-    bgColor.value = this.options.defaultBackground!;
+    bgColor.value = this.options.defaultBackground;
     bgColor.style.marginBottom = '10px';
 
     const hAlign = document.createElement('select');
-    ['left', 'center', 'right'].forEach((align) => {
+    ['left', 'center', 'right'].forEach(align => {
       const option = document.createElement('option');
       option.value = align;
       option.textContent = align;
@@ -206,7 +201,7 @@ export class TablePlugin implements Plugin {
     hAlign.style.width = '100%';
 
     const vAlign = document.createElement('select');
-    ['top', 'middle', 'bottom'].forEach((align) => {
+    ['top', 'middle', 'bottom'].forEach(align => {
       const option = document.createElement('option');
       option.value = align;
       option.textContent = align;
@@ -245,23 +240,22 @@ export class TablePlugin implements Plugin {
       vAlign,
       mergeBtn,
       splitBtn,
-      applyBtn,
+      applyBtn
     );
     document.body.appendChild(dialog);
   }
 
-  private mergeCells(cell: HTMLTableCellElement): void {
+  private mergeCells(_cell: HTMLTableCellElement): void {
     const selection = window.getSelection();
     if (!selection || !selection.rangeCount) return;
-    const range = selection.getRangeAt(0);
     const selectedCells = Array.from(
       this.editor
         .getToolbar()
-        ?.querySelectorAll('td[contenteditable="true"]') || [],
+        ?.querySelectorAll('td[contenteditable="true"]') || []
     );
     if (selectedCells.length > 1) {
       const firstCell = selectedCells[0] as HTMLTableCellElement;
-      selectedCells.slice(1).forEach((c) => {
+      selectedCells.slice(1).forEach(c => {
         firstCell.textContent += ' ' + c.textContent;
         c.remove();
       });

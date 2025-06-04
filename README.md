@@ -1,7 +1,4 @@
-Comprehensive documentation for installation, usage.
-
-
-# Claritypad WYSIWYG Editor
+# ClarityPad
 
 A lightweight, extensible WYSIWYG editor built with TypeScript, offering a plugin system for rich text editing. Designed for developers, it supports vanilla JavaScript, React, and Next.js with a focus on security, performance, and developer experience.
 
@@ -28,7 +25,7 @@ npm install claritypad
 <div id="editor"></div>
 
 <script type="module">
-  import { WysiwygEditor } from 'claritypad';
+  import { ClarityPadEditor } from 'claritypad';
   import { ImagePlugin, TablePlugin } from 'claritypad/plugins';
 
   const config = {
@@ -36,17 +33,17 @@ npm install claritypad
     menus: ['File', 'Edit', 'Insert', 'Table'],
     plugins: [
       { plugin: ImagePlugin, options: { uploadUrl: '/api/upload', maxWidth: 600 } },
-      { plugin: TablePlugin, options: { defaultRows: 3, defaultCols: 3, maxGridSize: 8 } },
-    ],
+      { plugin: TablePlugin, options: { defaultRows: 3, defaultCols: 3, maxGridSize: 8 } }
+    ]
   };
 
-  const editor = new WysiwygEditor('editor', config);
+  const editor = new ClarityPadEditor('editor', config);
 </script>
 ```
 
 ### React
 ```tsx
-import { ReactWysiwyg } from 'claritypad/react';
+import { ClarityPad } from 'claritypad/react';
 import { ImagePlugin, TablePlugin } from 'claritypad/plugins';
 
 function App() {
@@ -55,11 +52,11 @@ function App() {
     menus: ['File', 'Edit', 'Insert', 'Table'],
     plugins: [
       { plugin: ImagePlugin, options: { uploadUrl: '/api/upload', maxWidth: 600 } },
-      { plugin: TablePlugin, options: { defaultRows: 3, defaultCols: 3 } },
-    ],
+      { plugin: TablePlugin, options: { defaultRows: 3, defaultCols: 3 } }
+    ]
   };
 
-  return <ReactWysiwyg config={config} />;
+  return <ClarityPad config={config} />;
 }
 ```
 
@@ -68,7 +65,7 @@ function App() {
 import dynamic from 'next/dynamic';
 import { ImagePlugin, TablePlugin } from 'claritypad/plugins';
 
-const ReactWysiwyg = dynamic(() => import('claritypad/react'), { ssr: false });
+const ClarityPad = dynamic(() => import('claritypad/react'), { ssr: false });
 
 export default function Page() {
   const config = {
@@ -76,11 +73,11 @@ export default function Page() {
     menus: ['File', 'Edit', 'Insert'],
     plugins: [
       { plugin: ImagePlugin, options: { uploadUrl: '/api/upload' } },
-      { plugin: TablePlugin },
-    ],
+      { plugin: TablePlugin }
+    ]
   };
 
-  return <ReactWysiwyg config={config} />;
+  return <ClarityPad config={config} />;
 }
 ```
 

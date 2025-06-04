@@ -1,6 +1,6 @@
-import { Editor, EditorConfig, Plugin, sanitize } from './types';
-
-export class WysiwygEditor implements Editor {
+import { EditorConfig, IClarityPadEditor, Plugin } from '../types/type';
+import { sanitize } from '../utils';
+export class ClarityPadEditor implements IClarityPadEditor {
   private editor: HTMLElement;
   private plugins: Map<string, Plugin> = new Map();
   private config: EditorConfig;
@@ -28,7 +28,7 @@ export class WysiwygEditor implements Editor {
     this.editor.addEventListener('input', this.handleInput.bind(this));
     this.editor.addEventListener(
       'contextmenu',
-      this.handleContextMenu.bind(this),
+      this.handleContextMenu.bind(this)
     );
     this.initializePlugins();
   }
@@ -36,7 +36,7 @@ export class WysiwygEditor implements Editor {
   private setupToolbar(): void {
     this.toolbar = document.createElement('div');
     this.toolbar.setAttribute('role', 'toolbar');
-    this.toolbar.setAttribute('aria-label', 'Editor toolbar');
+    this.toolbar.setAttribute('aria-label', 'ClarityPad editor toolbar');
     this.toolbar.style.display = this.config.toolbar ? 'flex' : 'none';
     this.toolbar.style.flexWrap = 'wrap';
     this.toolbar.style.gap = '10px';
@@ -50,7 +50,7 @@ export class WysiwygEditor implements Editor {
     const menuBar = document.createElement('div');
     menuBar.style.display = 'flex';
     menuBar.style.gap = '10px';
-    this.config.menus?.forEach((menu) => {
+    this.config.menus?.forEach(menu => {
       const menuBtn = document.createElement('button');
       menuBtn.textContent = menu;
       menuBtn.setAttribute('aria-label', `${menu} menu`);
@@ -98,7 +98,7 @@ export class WysiwygEditor implements Editor {
     e.preventDefault();
     const target = e.target as HTMLElement;
     const plugin = this.plugins.get(
-      target.closest('img') ? 'image' : target.closest('table') ? 'table' : '',
+      target.closest('img') ? 'image' : target.closest('table') ? 'table' : ''
     );
     if (plugin && 'showContextMenu' in plugin) {
       (plugin as any).showContextMenu(target);
@@ -125,12 +125,12 @@ export class WysiwygEditor implements Editor {
   }
 
   public destroy(): void {
-    this.plugins.forEach((plugin) => plugin.destroy?.());
+    this.plugins.forEach(plugin => plugin.destroy?.());
     this.editor.contentEditable = 'false';
     this.editor.removeEventListener('input', this.handleInput.bind(this));
     this.editor.removeEventListener(
       'contextmenu',
-      this.handleContextMenu.bind(this),
+      this.handleContextMenu.bind(this)
     );
     this.toolbar?.remove();
   }

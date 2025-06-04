@@ -1,4 +1,5 @@
-import { Editor, Plugin, sanitize } from '../types';
+import { IClarityPadEditor, Plugin } from '../../types/type';
+import { sanitize } from '../../utils';
 
 interface ImagePluginOptions {
   uploadUrl?: string;
@@ -9,7 +10,7 @@ interface ImagePluginOptions {
 }
 
 export class ImagePlugin implements Plugin {
-  private editor: Editor;
+  private editor: IClarityPadEditor;
   private options: ImagePluginOptions;
   private pendingImageSrc: string | null = null;
 
@@ -20,9 +21,10 @@ export class ImagePlugin implements Plugin {
       allowCaptions: true,
       ...options,
     };
+    this.editor = {} as IClarityPadEditor; // Will be set in init
   }
 
-  public init(editor: Editor): void {
+  public init(editor: IClarityPadEditor): void {
     this.editor = editor;
     this.setupUI();
     this.editor
@@ -49,11 +51,11 @@ export class ImagePlugin implements Plugin {
     const altInput = this.createTextInput('Alt text');
     const captionInput = this.createTextInput(
       'Caption',
-      !this.options.allowCaptions,
+      !this.options.allowCaptions
     );
     const widthInput = this.createNumberInput(
       'Width (px)',
-      this.options.maxWidth,
+      this.options.maxWidth
     );
     const alignSelect = this.createAlignSelect();
     const submitBtn = this.createSubmitButton(dialog, {
@@ -70,7 +72,7 @@ export class ImagePlugin implements Plugin {
       captionInput,
       widthInput,
       alignSelect,
-      submitBtn,
+      submitBtn
     );
     document.body.appendChild(dialog);
   }
@@ -91,8 +93,8 @@ export class ImagePlugin implements Plugin {
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
     fileInput.style.marginBottom = '10px';
-    fileInput.addEventListener('change', (e) =>
-      this.handleFile((e.target as HTMLInputElement).files?.[0]),
+    fileInput.addEventListener('change', e =>
+      this.handleFile((e.target as HTMLInputElement).files?.[0])
     );
     return fileInput;
   }
@@ -103,15 +105,15 @@ export class ImagePlugin implements Plugin {
     urlInput.placeholder = 'Enter image URL';
     urlInput.style.marginBottom = '10px';
     urlInput.style.width = '100%';
-    urlInput.addEventListener('change', (e) =>
-      this.handleUrl((e.target as HTMLInputElement).value),
+    urlInput.addEventListener('change', e =>
+      this.handleUrl((e.target as HTMLInputElement).value)
     );
     return urlInput;
   }
 
   private createTextInput(
     placeholder: string,
-    hidden = false,
+    hidden = false
   ): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'text';
@@ -124,7 +126,7 @@ export class ImagePlugin implements Plugin {
 
   private createNumberInput(
     placeholder: string,
-    defaultValue?: number,
+    defaultValue?: number
   ): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'number';
@@ -139,7 +141,7 @@ export class ImagePlugin implements Plugin {
     const alignSelect = document.createElement('select');
     alignSelect.style.marginBottom = '10px';
     alignSelect.style.width = '100%';
-    ['left', 'center', 'right'].forEach((align) => {
+    ['left', 'center', 'right'].forEach(align => {
       const option = document.createElement('option');
       option.value = align;
       option.textContent = align.charAt(0).toUpperCase() + align.slice(1);
@@ -156,7 +158,7 @@ export class ImagePlugin implements Plugin {
       captionInput: HTMLInputElement;
       widthInput: HTMLInputElement;
       alignSelect: HTMLSelectElement;
-    },
+    }
   ): HTMLButtonElement {
     const submitBtn = document.createElement('button');
     submitBtn.textContent = 'Insert';
@@ -190,8 +192,7 @@ export class ImagePlugin implements Plugin {
       this.pendingImageSrc = url;
     } else {
       const reader = new FileReader();
-      reader.onload = (e) =>
-        (this.pendingImageSrc = e.target?.result as string);
+      reader.onload = e => (this.pendingImageSrc = e.target?.result as string);
       reader.readAsDataURL(file);
     }
   }
@@ -257,7 +258,7 @@ export class ImagePlugin implements Plugin {
     altInput.value = img.alt || '';
     const widthInput = this.createNumberInput(
       'Width (px)',
-      parseInt(img.style.width) || this.options.maxWidth,
+      parseInt(img.style.width) || this.options.maxWidth
     );
     const alignSelect = this.createAlignSelect();
     alignSelect.value =
@@ -269,7 +270,7 @@ export class ImagePlugin implements Plugin {
       img.alt = sanitize(altInput.value);
       img.style.width = `${Math.min(
         parseInt(widthInput.value) || this.options.maxWidth!,
-        this.options.maxWidth!,
+        this.options.maxWidth!
       )}px`;
       img.style.float = alignSelect.value === 'center' ? '' : alignSelect.value;
       img.parentElement!.style.textAlign =

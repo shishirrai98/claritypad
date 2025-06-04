@@ -1,16 +1,16 @@
-import { WysiwygEditor } from '../src/core';
+import { ClarityPadEditor } from '../src/core';
 import { ImagePlugin } from '../src/plugins/image';
 import { TablePlugin } from '../src/plugins/table';
 
-describe('WysiwygEditor', () => {
-  let editor: WysiwygEditor;
+describe('ClarityPadEditor', () => {
+  let editor: ClarityPadEditor;
   let container: HTMLElement;
 
   beforeEach(() => {
     container = document.createElement('div');
     container.id = 'editor';
     document.body.appendChild(container);
-    editor = new WysiwygEditor('editor', {
+    editor = new ClarityPadEditor('editor', {
       plugins: [
         { plugin: ImagePlugin, options: { maxWidth: 600 } },
         { plugin: TablePlugin, options: { defaultRows: 3 } },
